@@ -1,5 +1,6 @@
-package at.refugeescode.morse;
+package at.refugeescode.morse.endpoint;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,19 +14,18 @@ import java.util.stream.Stream;
 @RequestMapping
 public class MorseEndpoint {
 
-    private List<String> letters = Stream.of("a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "))
-            .collect(Collectors.toList());
+    @Value("#{'${letters}'.split(' ')}")
+    private List<String> letters;
 
-    private List<String> morseCode = Stream.of((".-  -...  -.-.  -..  .  ..-.  --.  ....  ..  .---  -.-  .-..  " +
-            "--  -.  ---  .--.  --.-  .-.  ...  -  ..-  ...-  .--  -..-  -.--  --..").split("  "))
-            .collect(Collectors.toList());
+    @Value("#{'${morsecodes}'.split('  ')}")
+    private List<String> morseCode;
 
     @PostMapping("/morse")
     String encode(@RequestBody String letter) {
         if (letter.trim().isEmpty()) {
             return " ";
         }
-        return convertToMorseCode(letter);
+        return convertToMorseCode(letter.toLowerCase());
     }
 
     private String convertToMorseCode(String letter) {
